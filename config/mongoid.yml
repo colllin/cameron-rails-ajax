@@ -1,7 +1,18 @@
+<% uri = URI.parse(ENV['MONGOHQ_URL'] || "mongodb://username:password@localhost:27092/data_whiteboard_dummy") %>
 production:
   sessions:
     default:
-      uri: <%= ENV['MONGOHQ_URL'] %>
+      database: <%= uri.path.sub('/','') %>
+      username: <%= uri.user %>
+      password: <%= uri.password %>
+      hosts:
+        - <%= uri.host %>:<%= uri.port %>
       options:
-        skip_version_check: true
         safe: true
+        consistency: :strong
+        max_retries: 30
+        retry_interval: 1
+  options:
+    allow_dynamic_fields: false
+    identity_map_enabled: true
+    raise_not_found_error: false
